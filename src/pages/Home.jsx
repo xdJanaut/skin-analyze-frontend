@@ -58,7 +58,7 @@ function Home() {
                     </div>
                     
                     {/* Right-side - Upload Card */}
-                    <div className="flex justify-center mt-8 md:mt-0">
+                    <div className="flex justify-center mt-8 md:mt-0 order-first md:order-last">
                         <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-6 md:p-8">
                             {/* Upload Icon Area */}
                             <div className="aspect-video bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl flex items-center justify-center mb-6">
