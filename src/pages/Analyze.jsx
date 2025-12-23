@@ -8,9 +8,11 @@ function Analyze() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState(null);
   
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const navigate = useNavigate();
 
   // Handle file selection from upload
@@ -67,9 +69,69 @@ function Analyze() {
     fileInputRef.current?.click();
   };
 
-  // Handle camera capture (simplified for now)
-  const handleCameraClick = () => {
-    setError('Camera feature coming soon! Please use "Upload Photo" for now.');
+  // Start camera
+  const handleCameraClick = async () => {
+    try {
+      setError(null);
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'user',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      });
+      
+      setStream(mediaStream);
+      setShowCamera(true);
+      
+      // Wait for video element to be ready
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      }, 100);
+    } catch (err) {
+      console.error('Camera error:', err);
+      setError('Unable to access camera. Please ensure you have granted camera permissions.');
+    }
+  };
+
+  // Capture photo from camera
+  const handleCapture = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw current video frame to canvas
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to blob and create file
+    canvas.toBlob((blob) => {
+      const file = new File([blob], `camera-capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      setSelectedFile(file);
+      
+      // Create preview from canvas
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      setImagePreview(dataUrl);
+      
+      // Stop camera and hide
+      stopCamera();
+    }, 'image/jpeg', 0.95);
+  };
+
+  // Stop camera and close
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
   };
 
   return (
@@ -92,8 +154,40 @@ function Analyze() {
           </div>
         )}
 
+        {/* Camera View */}
+        {showCamera && (
+          <div className="mb-8 bg-white rounded-3xl shadow-lg p-4 md:p-8">
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 text-center">
+              Position Your Face
+            </h3>
+            <div className="relative">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full rounded-lg"
+              />
+              <canvas ref={canvasRef} className="hidden" />
+            </div>
+            <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-4 mt-6">
+              <button
+                onClick={handleCapture}
+                className="w-full md:w-auto px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+              >
+                📸 Capture Photo
+              </button>
+              <button
+                onClick={stopCamera}
+                className="w-full md:w-auto px-8 py-3 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition border border-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Image Preview (if selected) */}
-        {imagePreview && (
+        {imagePreview && !showCamera && (
           <div className="mb-8 bg-white rounded-3xl shadow-lg p-4 md:p-8">
             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 text-center">
               Preview
@@ -136,8 +230,8 @@ function Analyze() {
           </div>
         )}
 
-        {/* Upload Card (only show if no image selected) */}
-        {!imagePreview && (
+        {/* Upload Card (only show if no image selected and camera not active) */}
+        {!imagePreview && !showCamera && (
           <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 border-2 border-dashed border-gray-300">
             <div className="flex justify-center gap-6 md:gap-8 mb-6 md:mb-8">
               {/* Upload Icon */}
