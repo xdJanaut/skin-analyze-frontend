@@ -21,7 +21,6 @@ function Register() {
     
     try {
       await axios.post(`${API_BASE_URL}/register`, formData);
-x
       alert('Registration successful! Please log in.');
       navigate('/login');
       
