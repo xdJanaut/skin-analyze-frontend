@@ -74,45 +74,45 @@ function Analyze() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-8 py-20">
+      <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 md:py-20">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
             Analyze Your Skin
           </h1>
-          <p className="text-lg text-gray-700">
+          <p className="text-base md:text-lg text-gray-700 px-4">
             Upload a photo to get personalized skin analysis and recommendations
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center text-sm md:text-base">
             {error}
           </div>
         )}
 
         {/* Image Preview (if selected) */}
         {imagePreview && (
-          <div className="mb-8 bg-white rounded-3xl shadow-lg p-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+          <div className="mb-8 bg-white rounded-3xl shadow-lg p-4 md:p-8">
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4 text-center">
               Preview
             </h3>
             <div className="flex justify-center mb-4">
               <img 
                 src={imagePreview} 
                 alt="Preview" 
-                className="max-h-96 rounded-lg shadow-md"
+                className="max-h-64 md:max-h-96 rounded-lg shadow-md w-full object-contain"
               />
             </div>
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-4">
               <button
                 onClick={handleAnalyze}
                 disabled={isAnalyzing}
-                className="px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                className="w-full md:w-auto px-6 md:px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
               >
                 {isAnalyzing ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -128,7 +128,7 @@ function Analyze() {
                   setSelectedFile(null);
                   setImagePreview(null);
                 }}
-                className="px-8 py-3 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition border border-gray-300"
+                className="w-full md:w-auto px-6 md:px-8 py-3 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition border border-gray-300"
               >
                 Choose Different Photo
               </button>
@@ -138,12 +138,12 @@ function Analyze() {
 
         {/* Upload Card (only show if no image selected) */}
         {!imagePreview && (
-          <div className="bg-white rounded-3xl shadow-lg p-12 border-2 border-dashed border-gray-300">
-            <div className="flex justify-center gap-8 mb-8">
+          <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 border-2 border-dashed border-gray-300">
+            <div className="flex justify-center gap-6 md:gap-8 mb-6 md:mb-8">
               {/* Upload Icon */}
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full flex items-center justify-center">
                 <svg
-                  className="w-10 h-10 text-gray-400"
+                  className="w-8 h-8 md:w-10 md:h-10 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -157,9 +157,9 @@ function Analyze() {
                 </svg>
               </div>
               {/* Camera Icon */}
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full flex items-center justify-center">
                 <svg
-                  className="w-10 h-10 text-gray-400"
+                  className="w-8 h-8 md:w-10 md:h-10 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -181,11 +181,11 @@ function Analyze() {
             </div>
 
             {/* Method Title */}
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
+            <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-3 md:mb-4">
               Choose your method
             </h2>
-            <p className="text-lg text-gray-700 text-center mb-8">
-               Make sure the photo is taken in good lighting and clearly shows your face.
+            <p className="text-base md:text-lg text-gray-700 text-center mb-6 md:mb-8 px-2">
+              Make sure the photo is taken in good lighting and clearly shows your face.
             </p>
 
             {/* Hidden File Input */}
@@ -197,11 +197,11 @@ function Analyze() {
               className="hidden"
             />
 
-            {/* Action Buttons */}
-            <div className="flex justify-center">
+            {/* Action Buttons - Stack on mobile, side-by-side on desktop */}
+            <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6">
               <button 
                 onClick={handleUploadClick}
-                className="flex gap-2 px-16 py-2 bg-green-700 text-white rounded-lg font-medium hover:bg-green-900 transition"
+                className="flex items-center justify-center gap-2 px-8 md:px-16 py-3 md:py-2 bg-green-700 text-white rounded-lg font-medium hover:bg-green-900 transition w-full md:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -210,7 +210,7 @@ function Analyze() {
               </button>
               <button 
                 onClick={handleCameraClick}
-                className="flex gap-2 px-16 py-2 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition border border-gray-300 ml-6"
+                className="flex items-center justify-center gap-2 px-8 md:px-16 py-3 md:py-2 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition border border-gray-300 w-full md:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
