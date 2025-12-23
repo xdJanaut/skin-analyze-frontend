@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -19,8 +20,8 @@ function Register() {
     setLoading(true);
     
     try {
-      await axios.post('http://localhost:8000/register', formData);
-      
+      await axios.post(`${API_BASE_URL}/register`, formData);
+x
       alert('Registration successful! Please log in.');
       navigate('/login');
       

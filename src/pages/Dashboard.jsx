@@ -1,3 +1,4 @@
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +22,7 @@ function Dashboard() {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/history', {
+      const response = await fetch(`${API_BASE_URL}/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

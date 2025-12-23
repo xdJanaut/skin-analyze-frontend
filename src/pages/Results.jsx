@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 
 const Results = () => {
   const location = useLocation();
@@ -76,7 +78,7 @@ const Results = () => {
                     Analysis Results
                 </h3>
                 <img 
-                    src={`http://localhost:8000${analysisData.annotated_image_url}`}
+                    src={`${API_BASE_URL}${analysisData.annotated_image_url}`}
                     alt="Detected skin conditions" 
                     className="w-full rounded-xl"
                 />
@@ -209,7 +211,7 @@ const Results = () => {
             Recommended Steps
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {analysisData.recommendations.map((rec, index) => (
+            {(analysisData.recommendations || []).map((rec, index) => (
               <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
                   {index + 1}
