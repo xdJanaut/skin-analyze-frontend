@@ -1,4 +1,4 @@
-import FeatureCard from "../components/Featurecard"
+import FeatureCard from "../components/FeatureCard"
 import { useNavigate } from "react-router-dom"
 function Home() {
     const navigate = useNavigate();
