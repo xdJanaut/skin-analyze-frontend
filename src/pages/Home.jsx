@@ -27,6 +27,24 @@ function Home() {
                             Understand your skin better and get actionable recommendations.
                         </p>
                         
+                        {/* Upload Card - Shows here on mobile, hidden on desktop */}
+                        <div className="md:hidden flex justify-center">
+                            <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-6">
+                                {/* Upload Icon Area */}
+                                <div className="aspect-video bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                                    <svg className="w-14 h-14 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                </div>
+                                {/* Placeholder Lines */}
+                                <div className="space-y-4">
+                                    <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-100 rounded w-3/4"></div>
+                                    <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-100 rounded w-1/2"></div>
+                                    <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-100 rounded w-5/6"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         {/* Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
                             <button 
@@ -57,8 +75,8 @@ function Home() {
                         </div>
                     </div>
                     
-                    {/* Right-side - Upload Card */}
-                    <div className="flex justify-center mt-8 md:mt-0 order-first md:order-last">
+                    {/* Right-side - Upload Card (Desktop only) */}
+                    <div className="hidden md:flex justify-center">
                         <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-6 md:p-8">
                             {/* Upload Icon Area */}
                             <div className="aspect-video bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl flex items-center justify-center mb-6">
@@ -140,4 +158,4 @@ function Home() {
     )
 }
 
-export default Home
+export default Home                     
