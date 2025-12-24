@@ -84,25 +84,46 @@ function Dashboard() {
     }
   };
 
-  const handleViewAnalysis = (analysis) => {
-    // Navigate to results page with the analysis data
-    navigate('/results', {
-      state: {
-        analysisData: {
-          acne_count: analysis.acne_count,
-          skin_score: analysis.score,
-          severity: analysis.severity,
-          feedback: analysis.feedback,
-          recommendations: analysis.recommendations,
-          detection_summary: analysis.detection_summary,
-          annotated_image_url: analysis.image_path,
-          timestamp: analysis.date
-        },
-        imageUrl: analysis.image_path,
-        fromHistory: true
-      }
-    });
-  };
+ const handleViewAnalysis = (analysis) => {
+  console.log('Full analysis data:', analysis); // Debug log
+  
+  // Parse detection_summary and secondary_summary properly
+  const detectionSummary = typeof analysis.detection_summary === 'string' 
+    ? JSON.parse(analysis.detection_summary) 
+    : (analysis.detection_summary || {});
+    
+  const secondarySummary = typeof analysis.secondary_summary === 'string'
+    ? JSON.parse(analysis.secondary_summary)
+    : (analysis.secondary_summary || {});
+  
+  const recommendations = typeof analysis.recommendations === 'string'
+    ? JSON.parse(analysis.recommendations)
+    : (analysis.recommendations || []);
+  
+  console.log('Parsed detection_summary:', detectionSummary);
+  console.log('Parsed secondary_summary:', secondarySummary);
+  
+  // Navigate to results page with the analysis data
+  navigate('/results', {
+    state: {
+      analysisData: {
+        acne_count: analysis.acne_count,
+        skin_score: analysis.score,
+        combined_score: analysis.score,
+        severity: analysis.severity,
+        feedback: analysis.feedback,
+        recommendations: recommendations,
+        detection_summary: detectionSummary,
+        secondary_summary: secondarySummary,
+        secondary_analysis_triggered: Object.keys(secondarySummary).length > 0,
+        annotated_image_url: analysis.image_path,
+        timestamp: analysis.date
+      },
+      imageUrl: analysis.image_path,
+      fromHistory: true
+    }
+  });
+};
 
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
