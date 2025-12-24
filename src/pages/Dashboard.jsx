@@ -23,7 +23,7 @@ function Dashboard() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/history`, {
+      const response = await fetch(`${API_BASE_URL}/api/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -63,7 +63,7 @@ function Dashboard() {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/history/${analysisId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/history/${analysisId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
