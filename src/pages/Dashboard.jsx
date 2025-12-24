@@ -187,7 +187,7 @@ function Dashboard() {
         
         {history.length === 0 ? (
           <div className="px-6 py-12 text-center">
-            <p className="text-gray-600 mb-4">No analyses yet</p>
+            <p className="text-gray-600 mb-4">No analysis yet</p>
             <button
               onClick={() => navigate('/analyze')}
               className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
