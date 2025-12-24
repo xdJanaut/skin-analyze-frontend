@@ -6,6 +6,7 @@ function Dashboard() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
 
@@ -46,6 +47,40 @@ function Dashboard() {
         setError('Failed to load analysis history');
         setLoading(false);
       }
+    }
+  };
+
+  const handleDelete = async (analysisId, event) => {
+    // Stop propagation so clicking delete doesn't trigger the row click
+    event.stopPropagation();
+    
+    // Confirm deletion
+    if (!window.confirm('Are you sure you want to delete this analysis?')) {
+      return;
+    }
+
+    setDeletingId(analysisId);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/history/${analysisId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        // Remove from local state
+        setHistory(history.filter(item => item.id !== analysisId));
+      } else {
+        alert('Failed to delete analysis');
+      }
+    } catch (error) {
+      console.error('Failed to delete:', error);
+      alert('Failed to delete analysis');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -166,9 +201,28 @@ function Dashboard() {
               <div 
                 key={analysis.id} 
                 onClick={() => handleViewAnalysis(analysis)}
-                className="px-6 py-4 hover:bg-gray-50 transition cursor-pointer"
+                className="px-6 py-4 hover:bg-gray-50 transition cursor-pointer relative"
               >
-                <div className="flex items-center justify-between">
+                {/* Delete Button */}
+                <button
+                  onClick={(e) => handleDelete(analysis.id, e)}
+                  disabled={deletingId === analysis.id}
+                  className="absolute top-4 right-4 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition disabled:opacity-50 z-10"
+                  title="Delete analysis"
+                >
+                  {deletingId === analysis.id ? (
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )}
+                </button>
+
+                <div className="flex items-center justify-between pr-12">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getSeverityColor(analysis.severity)}`}>
