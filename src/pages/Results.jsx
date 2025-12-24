@@ -14,6 +14,9 @@ const Results = () => {
     return null;
   }
 
+  // Use combined_score if available, otherwise fall back to skin_score
+  const displayScore = analysisData.combined_score ?? analysisData.skin_score;
+
   const getScoreColor = (score) => {
     if (score >= 85) return 'text-green-600';
     if (score >= 70) return 'text-lime-600';
@@ -32,6 +35,7 @@ const Results = () => {
     const descriptions = {
       'Pimples': 'Inflamed, raised bumps on the skin',
       'Acne': 'General inflammatory acne',
+      'acne': 'General inflammatory acne',
       'blackhead': 'Open comedones with oxidized sebum',
       'whitehead': 'Closed comedones under the skin',
       'cystic': 'Deep, painful acne lesions',
@@ -45,10 +49,33 @@ const Results = () => {
       'flat_wart': 'Flat, smooth growths',
       'syringoma': 'Small, benign sweat duct tumors',
       'crystalline': 'Clear, fluid-filled bumps',
-      'sebo-crystan-conglo': 'Complex sebaceous condition'
+      'sebo-crystan-conglo': 'Complex sebaceous condition',
+      'melasma': 'Brown or gray-brown patches of hyperpigmentation',
+      'Melasma': 'Brown or gray-brown patches of hyperpigmentation',
+      'rosacea': 'Redness and visible blood vessels',
+      'Rosacea': 'Redness and visible blood vessels'
     };
     return descriptions[type] || 'Detected skin condition';
   };
+
+  // Merge all detections from both models
+  const allDetections = {};
+  
+  // Add primary detections
+  if (analysisData.detection_summary) {
+    Object.entries(analysisData.detection_summary).forEach(([type, count]) => {
+      allDetections[type] = (allDetections[type] || 0) + count;
+    });
+  }
+  
+  // Add secondary detections
+  if (analysisData.secondary_summary) {
+    Object.entries(analysisData.secondary_summary).forEach(([type, count]) => {
+      allDetections[type] = (allDetections[type] || 0) + count;
+    });
+  }
+
+  const hasAnyDetections = Object.keys(allDetections).length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -70,48 +97,48 @@ const Results = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Left Column - Annotated Image Only */}
-            <div className="space-y-6">
+          {/* Left Column - Annotated Image */}
+          <div className="space-y-6">
             {analysisData.annotated_image_url ? (
-                <div className="bg-white rounded-2xl shadow-md p-6">
+              <div className="bg-white rounded-2xl shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Analysis Results
+                  Analysis Results
                 </h3>
                 <img 
-                    src={`${API_BASE_URL}${analysisData.annotated_image_url}`}
-                    alt="Detected skin conditions" 
-                    className="w-full rounded-xl"
+                  src={`${API_BASE_URL}${analysisData.annotated_image_url}`}
+                  alt="Detected skin conditions" 
+                  className="w-full rounded-xl"
                 />
                 <p className="text-sm text-gray-500 mt-3 text-center">
-                    Colored boxes show detected skin conditions with confidence scores
+                  Colored boxes show detected skin conditions with confidence scores
                 </p>
-                </div>
+              </div>
             ) : imageUrl ? (
-                <div className="bg-white rounded-2xl shadow-md p-6">
+              <div className="bg-white rounded-2xl shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Your Photo
+                  Your Photo
                 </h3>
                 <img 
-                    src={imageUrl} 
-                    alt="Uploaded photo" 
-                    className="w-full rounded-xl"
+                  src={imageUrl} 
+                  alt="Uploaded photo" 
+                  className="w-full rounded-xl"
                 />
-                </div>
+              </div>
             ) : null}
-            </div>
+          </div>
 
           {/* Right Column - Results */}
           <div className="space-y-6">
             {/* Skin Health Score - Main Card */}
-            <div className={`${getScoreBackground(analysisData.skin_score)} rounded-2xl shadow-md p-8`}>
+            <div className={`${getScoreBackground(displayScore)} rounded-2xl shadow-md p-8`}>
               <h2 className="text-gray-700 font-semibold mb-4 uppercase text-sm tracking-wide">
                 Overall Skin Health
               </h2>
               
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <div className={`text-6xl font-bold ${getScoreColor(analysisData.skin_score)}`}>
-                    {analysisData.skin_score}
+                  <div className={`text-6xl font-bold ${getScoreColor(displayScore)}`}>
+                    {displayScore}
                   </div>
                   <div className="text-gray-600 text-lg mt-1">out of 100</div>
                 </div>
@@ -136,13 +163,13 @@ const Results = () => {
                       strokeWidth="8"
                       fill="transparent"
                       strokeDasharray={`${2 * Math.PI * 40}`}
-                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - analysisData.skin_score / 100)}`}
-                      className={getScoreColor(analysisData.skin_score)}
+                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - displayScore / 100)}`}
+                      className={getScoreColor(displayScore)}
                       strokeLinecap="round"
                     />
                   </svg>
-                  <div className={`absolute inset-0 flex items-center justify-center text-xl font-bold ${getScoreColor(analysisData.skin_score)}`}>
-                    {analysisData.skin_score}%
+                  <div className={`absolute inset-0 flex items-center justify-center text-xl font-bold ${getScoreColor(displayScore)}`}>
+                    {displayScore}%
                   </div>
                 </div>
               </div>
@@ -150,21 +177,21 @@ const Results = () => {
               {/* Progress Bar */}
               <div className="w-full bg-gray-300 rounded-full h-3">
                 <div 
-                  className={`h-3 rounded-full ${getScoreColor(analysisData.skin_score)} bg-current`}
-                  style={{ width: `${analysisData.skin_score}%` }}
+                  className={`h-3 rounded-full ${getScoreColor(displayScore)} bg-current`}
+                  style={{ width: `${displayScore}%` }}
                 ></div>
               </div>
             </div>
 
-            {/* Detected Concerns */}
+            {/* Detected Concerns - Merged */}
             <div className="bg-white rounded-2xl shadow-md p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Detected Skin Conditions
               </h2>
               
-              {analysisData.detection_summary && Object.keys(analysisData.detection_summary).length > 0 ? (
+              {hasAnyDetections ? (
                 <div className="space-y-3">
-                  {Object.entries(analysisData.detection_summary)
+                  {Object.entries(allDetections)
                     .sort((a, b) => b[1] - a[1])
                     .map(([type, count]) => (
                       <div key={type} className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-100">
